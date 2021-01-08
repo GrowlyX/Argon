@@ -26,7 +26,7 @@ public class NetworkServer {
     }
 
     private void setupServerType() {
-        if (serverName.contains("hcf") || serverName.contains("infernal") || serverName.contains("horshcf")) {
+        if (serverName.contains("hcf") || serverName.contains("infernal") || serverName.contains("horshcf") || serverName.contains("hardcorefactions")) {
             this.serverType = NetworkServerType.HARDCORE_FACTIONS;
         }
         if (serverName.contains("bw") || serverName.contains("bedwars") || serverName.contains("horswaresz")) {

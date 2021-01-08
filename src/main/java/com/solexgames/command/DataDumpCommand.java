@@ -27,7 +27,7 @@ public class DataDumpCommand implements CommandExecutor {
                 player.sendMessage(ColorUtil.translate("  "));
                 if (!DataPlugin.getInstance().getServerManager().getNetworkServers().isEmpty()) {
                     DataPlugin.getInstance().getServerManager().getNetworkServers().forEach(networkServer -> {
-                        player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName() + "&7(TPS: " + networkServer.getTicksPerSecond() + ") (Online: " + networkServer.getOnlinePlayers() + ") (Max: " + networkServer.getMaxPlayerLimit() + ") (Status: " + networkServer.getServerStatus() + ") (Type: " + networkServer.getServerType().getServerTypeString() + ")"));
+                        player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName() + "&7(TPS: " + networkServer.getTicksPerSecond() + "&7) (Online: " + networkServer.getOnlinePlayers() + "&7) (Max: " + networkServer.getMaxPlayerLimit() + "&7) (Status: " + networkServer.getServerStatus() + "&7) (Type: " + networkServer.getServerType().getServerTypeString() + "&7)"));
                     });
                 } else {
                     player.sendMessage(ColorUtil.translate("&cNo servers are currently online."));

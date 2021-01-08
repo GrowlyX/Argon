@@ -22,6 +22,8 @@ public final class DataPlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        saveDefaultConfig();
+
         this.redisClient = new RedisClient();
         this.serverManager = new NetworkServerManager();
         this.commandManager = new CommandManager();

@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 public class ForceUpdateCommand implements CommandExecutor {
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (commandSender instanceof ConsoleCommandSender) {
             System.out.println("no");
             return false;
@@ -24,7 +24,7 @@ public class ForceUpdateCommand implements CommandExecutor {
         Player player = (Player) commandSender;
 
         if (player.hasPermission("argon.manager")) {
-            if (strings.length == 0) {
+            if (args.length == 0) {
                 Executor executor = Executors.newFixedThreadPool(1);
                 executor.execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerUpdate()));
                 player.sendMessage(ColorUtil.translate("&aForce-updated this server via RedisClient."));

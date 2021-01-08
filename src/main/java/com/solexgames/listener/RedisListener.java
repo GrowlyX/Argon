@@ -15,7 +15,6 @@ public class RedisListener extends JedisPubSub {
             @Override
             public void run() {
                 RedisMessage redisMessage = new Gson().fromJson(message, RedisMessage.class);
-
                 switch (redisMessage.getPacket()) {
                     case SERVER_DATA_UPDATE:
                         String serverName = redisMessage.getParam("SERVER");
