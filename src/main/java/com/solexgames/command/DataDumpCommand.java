@@ -25,9 +25,13 @@ public class DataDumpCommand implements CommandExecutor {
                 player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
                 player.sendMessage(ColorUtil.translate("&3&lNetwork Data:"));
                 player.sendMessage(ColorUtil.translate("  "));
-                DataPlugin.getInstance().getServerManager().getNetworkServers().forEach(networkServer -> {
-                    player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName() + "&7(TPS: " + networkServer.getTicksPerSecond() + ") (Online: " + networkServer.getOnlinePlayers() + ") (Max: " + networkServer.getMaxPlayerLimit() + ") (Status: " + networkServer.getServerStatus() + ") (Type: " + networkServer.getServerType().getServerTypeString() + ")"));
-                });
+                if (!DataPlugin.getInstance().getServerManager().getNetworkServers().isEmpty()) {
+                    DataPlugin.getInstance().getServerManager().getNetworkServers().forEach(networkServer -> {
+                        player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName() + "&7(TPS: " + networkServer.getTicksPerSecond() + ") (Online: " + networkServer.getOnlinePlayers() + ") (Max: " + networkServer.getMaxPlayerLimit() + ") (Status: " + networkServer.getServerStatus() + ") (Type: " + networkServer.getServerType().getServerTypeString() + ")"));
+                    });
+                } else {
+                    player.sendMessage(ColorUtil.translate("&cNo servers are currently online."));
+                }
                 player.sendMessage(ColorUtil.translate("  "));
                 player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
             }
