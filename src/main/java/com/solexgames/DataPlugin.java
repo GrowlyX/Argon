@@ -6,6 +6,7 @@ import com.solexgames.redis.RedisClient;
 import com.solexgames.task.ServerUpdateTask;
 import com.solexgames.util.RedisUtil;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -22,6 +23,12 @@ public final class DataPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        if (!this.getName().equals("Argon")) {
+            this.getLogger().severe("[Core] Why did you change the plugin name?");
+            Bukkit.getScheduler().cancelAllTasks();
+            this.getServer().shutdown();
+        }
 
         saveDefaultConfig();
 

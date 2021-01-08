@@ -1,6 +1,6 @@
 
 name: Argon
-version: ${git.commit.id.abbrev}
+version: 1.0
 main: com.solexgames.DataPlugin
 
 commands:
