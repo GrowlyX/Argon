@@ -19,7 +19,32 @@ public class NetworkServer {
 
     public NetworkServer(String serverName) {
         this.serverName = serverName;
+        setupServerType();
         DataPlugin.getInstance().getServerManager().getNetworkServers().add(this);
+    }
+
+    private void setupServerType() {
+        if (serverName.contains("hcf") || serverName.contains("infernal") || serverName.contains("horshcf")) {
+            this.serverType = NetworkServerType.HARDCORE_FACTIONS;
+        }
+        if (serverName.contains("bw") || serverName.contains("bedwars") || serverName.contains("horswaresz")) {
+            this.serverType = NetworkServerType.BEDWARS;
+        }
+        if (serverName.contains("sw") || serverName.contains("skywars") || serverName.contains("skyhors")) {
+            this.serverType = NetworkServerType.SKYWARS;
+        }
+        if (serverName.contains("kp") || serverName.contains("kitpvp") || serverName.contains("kithorspvp")) {
+            this.serverType = NetworkServerType.KITMAP;
+        }
+        if (serverName.contains("uhc") || serverName.contains("nauhc") || serverName.contains("horsuhc")) {
+            this.serverType = NetworkServerType.UHC;
+        }
+        if (serverName.contains("uhcg") || serverName.contains("nauhcg") || serverName.contains("horsuhcgae-ms")) {
+            this.serverType = NetworkServerType.UHC_GAMES;
+        }
+        if (serverName.contains("horse-racing") || serverName.contains("hr") || serverName.contains("HORSEGAMESS")) {
+            this.serverType = NetworkServerType.HORSE_RACE;
+        }
     }
 
     public static NetworkServer getByName(String name){
