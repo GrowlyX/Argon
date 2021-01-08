@@ -28,6 +28,7 @@ public class RedisUtil {
     public static String onServerUpdate() {
         return new RedisMessage(DataPacket.SERVER_DATA_UPDATE)
                 .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
+                .setParam("SERVER_TYPE", DataPlugin.getInstance().getConfig().getString("server-type"))
                 .setParam("ONLINEPLAYERS", String.valueOf(Bukkit.getOnlinePlayers().size()))
                 .setParam("MAXPLAYERS", String.valueOf(Bukkit.getMaxPlayers()))
                 .setParam("WHITELIST", String.valueOf(Bukkit.getServer().hasWhitelist()))

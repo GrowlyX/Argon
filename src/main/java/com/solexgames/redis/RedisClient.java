@@ -34,6 +34,7 @@ public class RedisClient {
             if (redisAuthentication){
                 jedis.auth(this.redisPassword);
             }
+            this.redisListener = new RedisListener();
             (new Thread(() -> jedis.subscribe(this.redisListener, "ARGON-DATA"))).start();
             jedis.connect();
             this.setClientActive(true);
