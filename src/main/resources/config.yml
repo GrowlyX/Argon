@@ -1,0 +1,10 @@
+#
+#  Argon - Server Data Manager by SolexGames (GrowlyX)
+#
+server-type: "HCF"
+server-name: "eu-hcf"
+redis:
+  address: "eu1.solexgames.com"
+  port: 25003
+  password: "Khb8eHnFJTMkcsCMRA"
+  authentication: true
