@@ -22,7 +22,7 @@ public class RedisUtil {
             tpsAvg[i] = format(tps[i]);
         }
 
-        return StringUtils.join(tpsAvg, ChatColor.GRAY +  ", " + ChatColor.YELLOW);
+        return StringUtils.join(tpsAvg, ChatColor.GRAY +  ", " + ChatColor.GREEN);
     }
 
     public static String onServerUpdate() {
