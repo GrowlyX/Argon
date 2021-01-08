@@ -24,7 +24,7 @@ public class RedisListener extends JedisPubSub {
                         String bootingServerName = redisMessage.getParam("SERVER");
 
                         if (!DataPlugin.getInstance().getServerManager().existServer(bootingServerName)){
-                            NetworkServer server = new NetworkServer(bootingServerName, NetworkServerType.valueOf(bootingServerName));
+                            NetworkServer server = new NetworkServer(bootingServerName, NetworkServerType.NOT_DEFINED);
 
                             server.setServerStatus(NetworkServerStatus.BOOTING);
                             server.setWhitelistEnabled(false);
@@ -39,6 +39,10 @@ public class RedisListener extends JedisPubSub {
                                 player.sendMessage(ColorUtil.translate(DataPlugin.getInstance().getConfig().getString("messages.online-broadcast").replace("<server>", bootingServerName)));
                             }
                         });
+
+                        if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
+                            DataPlugin.getInstance().getLogger().info("[DEBUG] Message received of " + bootingServerName + " being booted.");
+                        }
                         break;
                     case SERVER_DATA_UPDATE:
                         String serverName = redisMessage.getParam("SERVER");
@@ -57,9 +61,11 @@ public class RedisListener extends JedisPubSub {
                             server.setMaxPlayerLimit(maxPlayerLimit);
                             server.setOnlinePlayers(onlinePlayers);
                             server.setWhitelistEnabled(whitelistEnabled);
-                            server.updateServerStatus(true, whitelistEnabled);
+
                         }
                         NetworkServer.getByName(serverName).update(onlinePlayers, ticksPerSecond, maxPlayerLimit, whitelistEnabled, true);
+                        NetworkServer.getByName(serverName).setServerType(NetworkServerType.valueOf(serverType));
+
                         if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
                             DataPlugin.getInstance().getLogger().info("[DEBUG] Message received of " + serverName + " being updated.");
                         }

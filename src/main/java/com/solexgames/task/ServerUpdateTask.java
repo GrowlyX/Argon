@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 public class ServerUpdateTask extends BukkitRunnable {
 
     public ServerUpdateTask() {
-        this.runTaskTimer(DataPlugin.getInstance(), 0, 5 * 20L);
+        this.runTaskTimer(DataPlugin.getInstance(), 0,DataPlugin.getInstance().getConfig().getInt("refresh-time") * 20L);
     }
 
     @Override
