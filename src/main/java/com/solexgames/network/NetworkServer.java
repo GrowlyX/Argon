@@ -42,7 +42,7 @@ public class NetworkServer {
             this.serverStatus = NetworkServerStatus.WHITELISTED;
         } else if (online) {
             this.serverStatus = NetworkServerStatus.ONLINE;
-        } else if (!online) {
+        } else {
             this.serverStatus = NetworkServerStatus.OFFLINE;
         }
     }

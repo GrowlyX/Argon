@@ -37,6 +37,12 @@ public final class DataPlugin extends JavaPlugin {
         this.commandManager = new CommandManager();
 
         new ServerUpdateTask();
+
+        DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerOnline());
+
+        if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
+            DataPlugin.getInstance().getLogger().info("[DEBUG] Sent server online message to all connected servers.");
+        }
     }
 
     @Override

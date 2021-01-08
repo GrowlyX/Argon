@@ -7,6 +7,7 @@ import java.beans.ConstructorProperties;
 @Getter
 public enum DataPacket {
 
+    SERVER_DATA_ONLINE("ServerDataOnline"),
     SERVER_DATA_UPDATE("ServerDataUpdate"),
     SERVER_DATA_OFFLINE("ServerDataOffline");
 

@@ -17,6 +17,7 @@ public enum NetworkServerType {
     UHC_GAMES("UHC Games"),
     UHC("UHC"),
     HORSE_RACE("Horse Racing"),
+    NOT_DEFINED("Booting..."),
     POTSG("PotSG");
 
     public final String serverTypeString;

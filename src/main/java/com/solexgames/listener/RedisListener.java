@@ -3,8 +3,11 @@ package com.solexgames.listener;
 import com.google.gson.Gson;
 import com.solexgames.DataPlugin;
 import com.solexgames.network.NetworkServer;
+import com.solexgames.network.NetworkServerStatus;
 import com.solexgames.network.NetworkServerType;
 import com.solexgames.redis.RedisMessage;
+import com.solexgames.util.ColorUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.JedisPubSub;
 
@@ -17,6 +20,26 @@ public class RedisListener extends JedisPubSub {
             public void run() {
                 RedisMessage redisMessage = new Gson().fromJson(message, RedisMessage.class);
                 switch (redisMessage.getPacket()) {
+                    case SERVER_DATA_ONLINE:
+                        String bootingServerName = redisMessage.getParam("SERVER");
+
+                        if (!DataPlugin.getInstance().getServerManager().existServer(bootingServerName)){
+                            NetworkServer server = new NetworkServer(bootingServerName, NetworkServerType.valueOf(bootingServerName));
+
+                            server.setServerStatus(NetworkServerStatus.BOOTING);
+                            server.setWhitelistEnabled(false);
+                            server.setOnlinePlayers(0);
+                            server.setMaxPlayerLimit(0);
+                            server.setTicksPerSecond("&a0.0&7, &a0.0&7, &a0.0");
+                            server.setServerType(NetworkServerType.NOT_DEFINED);
+                        }
+
+                        Bukkit.getOnlinePlayers().forEach(player -> {
+                            if (player.hasPermission(DataPlugin.getInstance().getConfig().getString("permissions.status-broadcasts"))) {
+                                player.sendMessage(ColorUtil.translate(DataPlugin.getInstance().getConfig().getString("messages.online-broadcast").replace("<server>", bootingServerName)));
+                            }
+                        });
+                        break;
                     case SERVER_DATA_UPDATE:
                         String serverName = redisMessage.getParam("SERVER");
                         String serverType = redisMessage.getParam("SERVER_TYPE");
@@ -37,6 +60,9 @@ public class RedisListener extends JedisPubSub {
                             server.updateServerStatus(true, whitelistEnabled);
                         }
                         NetworkServer.getByName(serverName).update(onlinePlayers, ticksPerSecond, maxPlayerLimit, whitelistEnabled, true);
+                        if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
+                            DataPlugin.getInstance().getLogger().info("[DEBUG] Message received of " + serverName + " being updated.");
+                        }
                         break;
                     case SERVER_DATA_OFFLINE:
                         String offlineServerName = redisMessage.getParam("SERVER");
@@ -45,9 +71,21 @@ public class RedisListener extends JedisPubSub {
                             NetworkServer.getByName(offlineServerName).update(0, "0.0", 100, false, false);
                             DataPlugin.getInstance().getServerManager().removeNetworkServer(NetworkServer.getByName(offlineServerName));
                         }
+
+                        Bukkit.getOnlinePlayers().forEach(player -> {
+                            if (player.hasPermission(DataPlugin.getInstance().getConfig().getString("permissions.status-broadcasts"))) {
+                                player.sendMessage(ColorUtil.translate(DataPlugin.getInstance().getConfig().getString("messages.offline-broadcast").replace("<server>", offlineServerName)));
+                            }
+                        });
+
+                        if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
+                            DataPlugin.getInstance().getLogger().info("[DEBUG] Message received of " + offlineServerName + " going offline.");
+                        }
                         break;
                     default:
-                        DataPlugin.getInstance().getLogger().warning("[Redis] There was a response, but no message was received.");
+                        if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
+                            DataPlugin.getInstance().getLogger().info("[DEBUG] There was a message received but no response.");
+                        }
                         break;
                 }
             }

@@ -7,6 +7,7 @@ import java.beans.ConstructorProperties;
 @Getter
 public enum NetworkServerStatus {
 
+    BOOTING("Booting", "&6Booting..."),
     ONLINE("Online", "&aOnline"),
     OFFLINE("Offline", "&cOffline"),
     WHITELISTED("Whitelisted", "&eWhitelisted");

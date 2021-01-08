@@ -41,4 +41,10 @@ public class RedisUtil {
                 .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
                 .toJson();
     }
+
+    public static String onServerOnline(){
+        return new RedisMessage(DataPacket.SERVER_DATA_ONLINE)
+                .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
+                .toJson();
+    }
 }
