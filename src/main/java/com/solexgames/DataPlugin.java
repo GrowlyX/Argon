@@ -4,6 +4,7 @@ import com.solexgames.command.CommandManager;
 import com.solexgames.network.NetworkServerManager;
 import com.solexgames.redis.RedisClient;
 import com.solexgames.task.ServerUpdateTask;
+import com.solexgames.util.RedisUtil;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,6 +34,7 @@ public final class DataPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerOffline());
         this.redisClient.destroyClient();
         instance = null;
     }
