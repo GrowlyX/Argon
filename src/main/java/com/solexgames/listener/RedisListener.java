@@ -3,7 +3,6 @@ package com.solexgames.listener;
 import com.google.gson.Gson;
 import com.solexgames.DataPlugin;
 import com.solexgames.network.NetworkServer;
-import com.solexgames.network.NetworkServerType;
 import com.solexgames.redis.RedisMessage;
 import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.JedisPubSub;
@@ -34,10 +33,14 @@ public class RedisListener extends JedisPubSub {
                             server.setMaxPlayerLimit(maxPlayerLimit);
                             server.setOnlinePlayers(onlinePlayers);
                             server.setWhitelistEnabled(whitelistEnabled);
+                            server.updateServerStatus(true, whitelistEnabled);
                         }
-
+                        NetworkServer.getByName(serverName).update(onlinePlayers, ticksPerSecond, maxPlayerLimit, whitelistEnabled, true);
                         break;
                     case SERVER_DATA_OFFLINE:
+                        String offlineServerName = redisMessage.getParam("SERVER");
+
+                        NetworkServer.getByName(offlineServerName).update(0, "0.0", 100, false, false);
                         break;
                     default:
                         DataPlugin.getInstance().getLogger().warning("[Redis] There was a response, but no message was received.");

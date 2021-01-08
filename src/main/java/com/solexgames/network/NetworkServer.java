@@ -10,7 +10,9 @@ public class NetworkServer {
 
     private String serverName;
     private String ticksPerSecond;
+
     private NetworkServerType serverType;
+    private NetworkServerStatus serverStatus;
 
     private int maxPlayerLimit;
     private int onlinePlayers;
@@ -20,7 +22,7 @@ public class NetworkServer {
     public NetworkServer(String serverName) {
         this.serverName = serverName;
         setupServerType();
-        DataPlugin.getInstance().getServerManager().getNetworkServers().add(this);
+        DataPlugin.getInstance().getServerManager().addNetworkServer(this);
     }
 
     private void setupServerType() {
@@ -51,10 +53,21 @@ public class NetworkServer {
         return DataPlugin.getInstance().getServerManager().getNetworkServers().stream().filter(masters -> masters.getServerName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public void update(int onlinePlayers, String ticksPerSecond, int maxPlayerLimit, boolean whitelistEnabled) {
+    public void update(int onlinePlayers, String ticksPerSecond, int maxPlayerLimit, boolean whitelistEnabled, boolean online) {
         this.onlinePlayers = onlinePlayers;
         this.ticksPerSecond = ticksPerSecond;
         this.maxPlayerLimit = maxPlayerLimit;
         this.whitelistEnabled = whitelistEnabled;
+        updateServerStatus(online, whitelistEnabled);
+    }
+
+    public void updateServerStatus(boolean online, boolean whitelistEnabled) {
+        if (whitelistEnabled && online) {
+            this.serverStatus = NetworkServerStatus.WHITELISTED;
+        } else if (online) {
+            this.serverStatus = NetworkServerStatus.ONLINE;
+        } else if (!online) {
+            this.serverStatus = NetworkServerStatus.OFFLINE;
+        }
     }
 }

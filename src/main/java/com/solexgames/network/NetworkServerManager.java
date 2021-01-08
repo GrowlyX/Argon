@@ -12,8 +12,12 @@ public class NetworkServerManager {
 
     private List<NetworkServer> networkServers = new ArrayList<>();
 
-    public void removeEventServer(NetworkServer networkServer){
+    public void removeNetworkServer(NetworkServer networkServer){
         networkServers.remove(networkServer);
+    }
+
+    public void addNetworkServer(NetworkServer networkServer){
+        networkServers.add(networkServer);
     }
 
     public boolean existServer(String networkServer){
