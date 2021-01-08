@@ -40,7 +40,10 @@ public class RedisListener extends JedisPubSub {
                     case SERVER_DATA_OFFLINE:
                         String offlineServerName = redisMessage.getParam("SERVER");
 
-                        NetworkServer.getByName(offlineServerName).update(0, "0.0", 100, false, false);
+                        if (NetworkServer.getByName(offlineServerName) != null) {
+                            NetworkServer.getByName(offlineServerName).update(0, "0.0", 100, false, false);
+                            DataPlugin.getInstance().getServerManager().removeNetworkServer(NetworkServer.getByName(offlineServerName));
+                        }
                         break;
                     default:
                         DataPlugin.getInstance().getLogger().warning("[Redis] There was a response, but no message was received.");

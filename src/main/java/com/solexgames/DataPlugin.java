@@ -1,5 +1,6 @@
 package com.solexgames;
 
+import com.solexgames.command.CommandManager;
 import com.solexgames.network.NetworkServerManager;
 import com.solexgames.redis.RedisClient;
 import com.solexgames.task.ServerUpdateTask;
@@ -15,6 +16,7 @@ public final class DataPlugin extends JavaPlugin {
     public RedisClient redisClient;
 
     public NetworkServerManager serverManager;
+    public CommandManager commandManager;
 
     @Override
     public void onEnable() {
@@ -22,6 +24,7 @@ public final class DataPlugin extends JavaPlugin {
 
         this.redisClient = new RedisClient();
         this.serverManager = new NetworkServerManager();
+        this.commandManager = new CommandManager();
 
         new ServerUpdateTask();
     }
