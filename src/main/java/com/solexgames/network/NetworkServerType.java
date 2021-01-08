@@ -8,12 +8,16 @@ import java.beans.ConstructorProperties;
 public enum NetworkServerType {
 
     PRACTICE("Practice"),
-    HARDCORE_FACTIONS("HCF"),
     KITPVP("KitPvP"),
+    HARDCORE_FACTIONS("HCF"),
     KITMAP("KitMap"),
+    SKYWARS("SkyWars"),
+    BEDWARS("BedWars"),
     MEETUP("UHC Meetup"),
     UHC_GAMES("UHC Games"),
-    UHC("UHC");
+    UHC("UHC"),
+    HORSE_RACE("Horse Racing"),
+    POTSG("PotSG");
 
     public final String serverTypeString;
 
