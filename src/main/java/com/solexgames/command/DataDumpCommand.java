@@ -27,7 +27,7 @@ public class DataDumpCommand implements CommandExecutor {
                 player.sendMessage(ColorUtil.translate("  "));
                 if (!DataPlugin.getInstance().getServerManager().getNetworkServers().isEmpty()) {
                     DataPlugin.getInstance().getServerManager().getNetworkServers().forEach(networkServer -> {
-                        player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName().toLowerCase() + "&7(TPS: " + networkServer.getTicksPerSecond() + "&7) (Online: " + String.valueOf(networkServer.getOnlinePlayers()) + "&7) (Max: " + String.valueOf(networkServer.getMaxPlayerLimit()) + "&7) (Status: " + networkServer.getServerStatus().getServerStatusFancyString() + "&7) (Type: " + networkServer.getServerType().getServerTypeString() + "&7)"));
+                        player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName().toLowerCase() + "&7(TPS: " + networkServer.getTicksPerSecondSimplified() + "&7) (Online: " + networkServer.getOnlinePlayers() + "/" + networkServer.getMaxPlayerLimit() + "&7) (Status: " + networkServer.getServerStatus().getServerStatusFancyString() + "&7) (Type: " + networkServer.getServerType().getServerTypeString() + "&7)"));
                     });
                 } else {
                     player.sendMessage(ColorUtil.translate("&cNo servers are currently online."));
@@ -41,7 +41,7 @@ public class DataDumpCommand implements CommandExecutor {
 
                 if (networkServer != null) {
                     player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
-                    player.sendMessage(ColorUtil.translate("&3&l" + networkServer.getServerName() + " Data:"));
+                    player.sendMessage(ColorUtil.translate("&3&l" + StringUtils.capitalize(networkServer.getServerName()).toLowerCase() + " Data:"));
                     player.sendMessage(ColorUtil.translate("  "));
                     player.sendMessage(ColorUtil.translate("&bServer Type: &3" + networkServer.getServerType().getServerTypeString()));
                     player.sendMessage(ColorUtil.translate("&bServer Status: &3" + networkServer.getServerStatus().getServerStatusFancyString()));

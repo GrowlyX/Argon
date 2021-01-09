@@ -1,10 +1,31 @@
 #
 #  Argon - Server Data Manager by SolexGames (GrowlyX)
 #
-server-type: "HCF"
-server-id: "eu-hcf"
+#    Gamemode Types:
+#
+#    PRACTICE("Practice"),
+#    KITPVP("KitPvP"),
+#    HARDCORE_FACTIONS("HCF"),
+#    KITMAP("KitMap"),
+#    SKYWARS("SkyWars"),
+#    BEDWARS("BedWars"),
+#    MEETUP("UHC Meetup"),
+#    UHC_GAMES("UHC Games"),
+#    UHC("UHC"),
+#    HORSE_RACE("Horse Racing"),
+#    POTSG("PotSG");
+#
+debug: false
+server-type: "PRACTICE"
+server-id: "eu-practice"
+refresh-time: 5
 redis:
   address: "eu1.solexgames.com"
-  port: 25003
-  password: "Khb8eHnFJTMkcsCMRA"
+  port: "25565"
+  password: "password"
   authentication: true
+permissions:
+  status-broadcasts: "argon.developer"
+messages:
+  offline-broadcast: "&3[S] &e<server> &bjust went &cOffline&b."
+  online-broadcast: "&3[S] &e<server> &bjust came online and will be joinable in &35 Seconds&b."

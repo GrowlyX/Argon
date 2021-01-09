@@ -47,6 +47,7 @@ public final class DataPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Bukkit.getScheduler().cancelAllTasks();
         DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerOffline());
         this.redisClient.destroyClient();
         instance = null;

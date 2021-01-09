@@ -10,6 +10,7 @@ public class NetworkServer {
 
     private String serverName;
     private String ticksPerSecond;
+    private String ticksPerSecondSimplified;
 
     private NetworkServerType serverType;
     private NetworkServerStatus serverStatus;
@@ -29,11 +30,12 @@ public class NetworkServer {
         return DataPlugin.getInstance().getServerManager().getNetworkServers().stream().filter(masters -> masters.getServerName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-    public void update(int onlinePlayers, String ticksPerSecond, int maxPlayerLimit, boolean whitelistEnabled, boolean online) {
+    public void update(int onlinePlayers, String ticksPerSecond, int maxPlayerLimit, boolean whitelistEnabled, String ticksPerSecondSimplified, boolean online) {
         this.onlinePlayers = onlinePlayers;
         this.ticksPerSecond = ticksPerSecond;
         this.maxPlayerLimit = maxPlayerLimit;
         this.whitelistEnabled = whitelistEnabled;
+        this.ticksPerSecondSimplified = ticksPerSecondSimplified;
         updateServerStatus(online, whitelistEnabled);
     }
 

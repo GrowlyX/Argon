@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.util.Arrays;
+
 public class RedisUtil {
 
     private static String format(double tps) {
@@ -25,6 +27,12 @@ public class RedisUtil {
         return StringUtils.join(tpsAvg, ChatColor.GRAY +  ", " + ChatColor.GREEN);
     }
 
+    public static String getTicksPerSecondSimplified() {
+        double[] tps = Bukkit.spigot().getTPS();
+
+        return ChatColor.GREEN + String.valueOf(Math.min(Math.round(tps[0] * 100.0 ) / 100.0, 20.0));
+    }
+
     public static String onServerUpdate() {
         return new RedisMessage(DataPacket.SERVER_DATA_UPDATE)
                 .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
@@ -33,6 +41,7 @@ public class RedisUtil {
                 .setParam("MAXPLAYERS", String.valueOf(Bukkit.getMaxPlayers()))
                 .setParam("WHITELIST", String.valueOf(Bukkit.getServer().hasWhitelist()))
                 .setParam("TPS", getTicksPerSecond())
+                .setParam("TPSSIMPLE", getTicksPerSecondSimplified())
                 .toJson();
     }
 
@@ -45,6 +54,13 @@ public class RedisUtil {
     public static String onServerOnline(){
         return new RedisMessage(DataPacket.SERVER_DATA_ONLINE)
                 .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
+                .toJson();
+    }
+
+    public static String onCommandSend(String command, String targetServer){
+        return new RedisMessage(DataPacket.SERVER_DATA_COMMAND)
+                .setParam("TARGETSERVER", targetServer)
+                .setParam("COMMAND", command)
                 .toJson();
     }
 }

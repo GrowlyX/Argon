@@ -48,6 +48,7 @@ public class RedisListener extends JedisPubSub {
                         String serverName = redisMessage.getParam("SERVER");
                         String serverType = redisMessage.getParam("SERVER_TYPE");
                         String ticksPerSecond = redisMessage.getParam("TPS");
+                        String ticksPerSecondSimple = redisMessage.getParam("TPSSIMPLE");
 
                         int maxPlayerLimit = Integer.parseInt(redisMessage.getParam("MAXPLAYERS"));
                         int onlinePlayers = Integer.parseInt(redisMessage.getParam("ONLINEPLAYERS"));
@@ -61,9 +62,10 @@ public class RedisListener extends JedisPubSub {
                             server.setMaxPlayerLimit(maxPlayerLimit);
                             server.setOnlinePlayers(onlinePlayers);
                             server.setWhitelistEnabled(whitelistEnabled);
+                            server.setTicksPerSecondSimplified(ticksPerSecondSimple);
 
                         }
-                        NetworkServer.getByName(serverName).update(onlinePlayers, ticksPerSecond, maxPlayerLimit, whitelistEnabled, true);
+                        NetworkServer.getByName(serverName).update(onlinePlayers, ticksPerSecond, maxPlayerLimit, whitelistEnabled, ticksPerSecondSimple, true);
                         NetworkServer.getByName(serverName).setServerType(NetworkServerType.valueOf(serverType));
 
                         if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
@@ -74,7 +76,7 @@ public class RedisListener extends JedisPubSub {
                         String offlineServerName = redisMessage.getParam("SERVER");
 
                         if (NetworkServer.getByName(offlineServerName) != null) {
-                            NetworkServer.getByName(offlineServerName).update(0, "0.0", 100, false, false);
+                            NetworkServer.getByName(offlineServerName).update(0, "0.0", 100, false, "0.0", false);
                             DataPlugin.getInstance().getServerManager().removeNetworkServer(NetworkServer.getByName(offlineServerName));
                         }
 
