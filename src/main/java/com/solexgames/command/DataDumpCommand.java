@@ -22,18 +22,16 @@ public class DataDumpCommand implements CommandExecutor {
         Player player = (Player) commandSender;
         if (player.hasPermission("argon.manager")) {
             if (args.length == 0) {
-                player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
-                player.sendMessage(ColorUtil.translate("&3&lNetwork Data:"));
-                player.sendMessage(ColorUtil.translate("  "));
                 if (!DataPlugin.getInstance().getServerManager().getNetworkServers().isEmpty()) {
-                    DataPlugin.getInstance().getServerManager().getNetworkServers().forEach(networkServer -> {
-                        player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName().toLowerCase() + "&7(TPS: " + networkServer.getTicksPerSecondSimplified() + "&7) (Online: " + networkServer.getOnlinePlayers() + "/" + networkServer.getMaxPlayerLimit() + "&7) (Status: " + networkServer.getServerStatus().getServerStatusFancyString() + "&7) (Type: " + networkServer.getServerType().getServerTypeString() + "&7)"));
-                    });
+                    player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
+                    player.sendMessage(ColorUtil.translate("&3&lNetwork Data:"));
+                    player.sendMessage(ColorUtil.translate("  "));
+                    DataPlugin.getInstance().getServerManager().getNetworkServers().forEach(networkServer -> player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName().toLowerCase() + "&7(TPS: " + networkServer.getTicksPerSecondSimplified() + "&7) (Online: " + networkServer.getOnlinePlayers() + "/" + networkServer.getMaxPlayerLimit() + "&7) (Status: " + networkServer.getServerStatus().getServerStatusFancyString() + "&7) (Type: " + networkServer.getServerType().getServerTypeString() + "&7)")));
+                    player.sendMessage(ColorUtil.translate("  "));
+                    player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
                 } else {
                     player.sendMessage(ColorUtil.translate("&cNo servers are currently online."));
                 }
-                player.sendMessage(ColorUtil.translate("  "));
-                player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
             }
             if (args.length > 0) {
                 String server = args[0];
