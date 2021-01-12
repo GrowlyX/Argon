@@ -8,14 +8,16 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class ServerUpdateTask extends BukkitRunnable {
+    
+    public Executor executor;
 
     public ServerUpdateTask() {
         this.runTaskTimer(DataPlugin.getInstance(), 0,DataPlugin.getInstance().getConfig().getInt("refresh-time") * 20L);
+        this.executor = Executors.newFixedThreadPool(1);
     }
 
     @Override
     public void run() {
-        Executor executor = Executors.newFixedThreadPool(1);
         executor.execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerUpdate()));
     }
 }
