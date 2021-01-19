@@ -11,16 +11,13 @@ public class ServerUpdateTask extends BukkitRunnable {
     
     public Executor executor;
 
-    private final Executor executor;
-
     public ServerUpdateTask() {
-        this.executor = Executors.newFixedThreadPool(1);
         this.runTaskTimer(DataPlugin.getInstance(), 0,DataPlugin.getInstance().getConfig().getInt("refresh-time") * 20L);
         this.executor = Executors.newFixedThreadPool(1);
     }
 
     @Override
     public void run() {
-        executor.execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerUpdate()));
+        DataPlugin.getInstance().getRedisThread().execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerUpdate()));
     }
 }

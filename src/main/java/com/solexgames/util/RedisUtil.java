@@ -56,11 +56,4 @@ public class RedisUtil {
                 .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
                 .toJson();
     }
-
-    public static String onCommandSend(String command, String targetServer){
-        return new RedisMessage(DataPacket.SERVER_DATA_COMMAND)
-                .setParam("TARGETSERVER", targetServer)
-                .setParam("COMMAND", command)
-                .toJson();
-    }
 }
