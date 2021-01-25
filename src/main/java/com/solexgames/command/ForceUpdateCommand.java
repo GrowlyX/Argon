@@ -26,7 +26,7 @@ public class ForceUpdateCommand implements CommandExecutor {
         if (player.hasPermission("argon.manager")) {
             if (args.length == 0) {
                 Executor executor = Executors.newFixedThreadPool(1);
-                executor.execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerUpdate()));
+                executor.execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.getServerUpdateMessage().toString()));
                 player.sendMessage(ColorUtil.translate("&aForce-updated this server via RedisClient."));
             }
         } else {

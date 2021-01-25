@@ -1,59 +1,59 @@
 package com.solexgames.util;
 
+import com.google.gson.JsonObject;
 import com.solexgames.DataPlugin;
 import com.solexgames.packet.DataPacket;
-import com.solexgames.redis.RedisMessage;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.util.Arrays;
-
 public class RedisUtil {
 
-    private static String format(double tps) {
-        return ( ( tps > 18.0 ) ? ChatColor.GREEN : ( tps > 16.0 ) ? ChatColor.YELLOW : ChatColor.RED ).toString()
-                + ( ( tps > 20.0 ) ? "*" : "" ) + Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 );
+    /**
+     * Get the ticks per second of the server
+     *
+     * @return the formatted string of the tps
+     */
+    public static String getTicksPerSecondFormatted() {
+        return ChatColor.GREEN + String.format("%.2f", Math.min(DataPlugin.getInstance().getTpsRunnable().getTPS(), 20.0));
     }
 
-    public static String getTicksPerSecond() {
-        double[] tps = Bukkit.spigot().getTPS();
-        String[] tpsAvg = new String[tps.length];
-
-        for (int i = 0; i < tps.length; i++) {
-            tpsAvg[i] = format(tps[i]);
-        }
-
-        return StringUtils.join(tpsAvg, ChatColor.GRAY +  ", " + ChatColor.GREEN);
+    /**
+     * Get the update message in the format of a {@link JsonObject}
+     *
+     * @return the object
+     */
+    public static JsonObject getServerUpdateMessage() {
+        return new JsonAppender()
+                .append("packet", DataPacket.SERVER_DATA_UPDATE.name())
+                .append("server", DataPlugin.getInstance().getConfig().getString("server-id"))
+                .append("server_type", DataPlugin.getInstance().getConfig().getString("server-type"))
+                .append("online_players", Bukkit.getOnlinePlayers().size())
+                .append("max_players", Bukkit.getMaxPlayers())
+                .append("whitelist", Bukkit.getServer().hasWhitelist())
+                .append("tps", getTicksPerSecondFormatted()).get();
     }
 
-    public static String getTicksPerSecondSimplified() {
-        double[] tps = Bukkit.spigot().getTPS();
-
-        return ChatColor.GREEN + String.valueOf(Math.min(Math.round(tps[0] * 100.0 ) / 100.0, 20.0));
+    /**
+     * Get the offline message in the format of a {@link JsonObject}
+     *
+     * @return the object
+     */
+    public static JsonObject getServerOfflineMessage() {
+        return new JsonAppender()
+                .append("packet", DataPacket.SERVER_DATA_OFFLINE.name())
+                .append("server_type", DataPlugin.getInstance().getConfig().getString("server-type"))
+                .append("server", DataPlugin.getInstance().getConfig().getString("server-id")).get();
     }
 
-    public static String onServerUpdate() {
-        return new RedisMessage(DataPacket.SERVER_DATA_UPDATE)
-                .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
-                .setParam("SERVER_TYPE", DataPlugin.getInstance().getConfig().getString("server-type"))
-                .setParam("ONLINEPLAYERS", String.valueOf(Bukkit.getOnlinePlayers().size()))
-                .setParam("MAXPLAYERS", String.valueOf(Bukkit.getMaxPlayers()))
-                .setParam("WHITELIST", String.valueOf(Bukkit.getServer().hasWhitelist()))
-                .setParam("TPS", getTicksPerSecond())
-                .setParam("TPSSIMPLE", getTicksPerSecondSimplified())
-                .toJson();
-    }
-
-    public static String onServerOffline(){
-        return new RedisMessage(DataPacket.SERVER_DATA_OFFLINE)
-                .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
-                .toJson();
-    }
-
-    public static String onServerOnline(){
-        return new RedisMessage(DataPacket.SERVER_DATA_ONLINE)
-                .setParam("SERVER", DataPlugin.getInstance().getConfig().getString("server-id"))
-                .toJson();
+    /**
+     * Get the online message in the format of a {@link JsonObject}
+     *
+     * @return the object
+     */
+    public static JsonObject getServerOnlineMessage() {
+        return new JsonAppender()
+                .append("packet", DataPacket.SERVER_DATA_ONLINE.name())
+                .append("server_type", DataPlugin.getInstance().getConfig().getString("server-type"))
+                .append("server", DataPlugin.getInstance().getConfig().getString("server-id")).get();
     }
 }

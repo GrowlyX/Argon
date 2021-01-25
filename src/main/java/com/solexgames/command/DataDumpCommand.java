@@ -4,11 +4,14 @@ import com.solexgames.DataPlugin;
 import com.solexgames.network.NetworkServer;
 import com.solexgames.util.ColorUtil;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.stream.Collectors;
 
 public class DataDumpCommand implements CommandExecutor {
 
@@ -19,41 +22,74 @@ public class DataDumpCommand implements CommandExecutor {
             return false;
         }
 
-        Player player = (Player) commandSender;
-        if (player.hasPermission("argon.manager")) {
-            if (args.length == 0) {
-                if (!DataPlugin.getInstance().getServerManager().getNetworkServers().isEmpty()) {
-                    player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
-                    player.sendMessage(ColorUtil.translate("&3&lNetwork Data:"));
-                    player.sendMessage(ColorUtil.translate("  "));
-                    DataPlugin.getInstance().getServerManager().getNetworkServers().forEach(networkServer -> player.sendMessage(ColorUtil.translate(" &8&l• &b" + networkServer.getServerName().toLowerCase() + "&7(TPS: " + networkServer.getTicksPerSecondSimplified() + "&7) (Online: " + networkServer.getOnlinePlayers() + "/" + networkServer.getMaxPlayerLimit() + "&7) (Status: " + networkServer.getServerStatus().getServerStatusFancyString() + "&7) (Type: " + networkServer.getServerType().getServerTypeString() + "&7)")));
-                    player.sendMessage(ColorUtil.translate("  "));
-                    player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
-                } else {
-                    player.sendMessage(ColorUtil.translate("&cNo servers are currently online."));
-                }
-            }
-            if (args.length > 0) {
-                String server = args[0];
-                NetworkServer networkServer = NetworkServer.getByName(server);
+        final Player player = (Player) commandSender;
 
-                if (networkServer != null) {
-                    player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
-                    player.sendMessage(ColorUtil.translate("&3&l" + StringUtils.capitalize(networkServer.getServerName()).toLowerCase() + " Data:"));
-                    player.sendMessage(ColorUtil.translate("  "));
-                    player.sendMessage(ColorUtil.translate("&bServer Type: &3" + networkServer.getServerType().getServerTypeString()));
-                    player.sendMessage(ColorUtil.translate("&bServer Status: &3" + networkServer.getServerStatus().getServerStatusFancyString()));
-                    player.sendMessage(ColorUtil.translate("&bMax Players: &3" + networkServer.getMaxPlayerLimit()));
-                    player.sendMessage(ColorUtil.translate("&bOnline Players: &3" + networkServer.getOnlinePlayers()));
-                    player.sendMessage(ColorUtil.translate("&bTicks Per Second: &3" + networkServer.getTicksPerSecond()));
-                    player.sendMessage(ColorUtil.translate("&7&m" + StringUtils.repeat("-", 53)));
-                } else {
-                    player.sendMessage(ColorUtil.translate("&cThat server is not online or does not exist."));
-                }
-            }
-        } else {
-            player.sendMessage(ColorUtil.translate("&cNo permission."));
+        if (!player.hasPermission("argon.manager")) {
+            player.sendMessage(ChatColor.RED + "No permission.");
+            return false;
         }
+
+        if (args.length == 0) {
+            final String networkData = DataPlugin.getInstance().getServerManager().getNetworkServers().stream()
+                    .map(this::getNetworkData)
+                    .collect(Collectors.joining("\n"));
+
+            player.sendMessage(new String[]{
+                    ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + StringUtils.repeat("-", 52),
+                    ChatColor.DARK_AQUA + "Network Data: ",
+                    networkData,
+                    ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + StringUtils.repeat("-", 52),
+            });
+        } else {
+            final String serverName = args[0];
+            final NetworkServer server = NetworkServer.getByName(serverName);
+
+            if (server == null) {
+                player.sendMessage(ChatColor.RED + "No server with name \"" + serverName + "\" is online.");
+                return false;
+            }
+
+            player.sendMessage(new String[]{
+                    ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + StringUtils.repeat("-", 52),
+                    ChatColor.DARK_AQUA + server.getServerName() + " Data:",
+                    "",
+                    this.getIndividualNetworkData(server),
+                    ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + StringUtils.repeat("-", 52)
+            });
+        }
+
         return false;
+    }
+
+    /**
+     * Get the data of the network
+     *
+     * @param server the server
+     * @return the data in a formatted string
+     */
+    private String getNetworkData(NetworkServer server) {
+        return ChatColor.GRAY + ChatColor.BOLD.toString() + "• " + String.join(" ", new String[]{
+                ChatColor.AQUA + server.getServerName(),
+                ChatColor.GRAY + "(TPS: " + server.getTicksPerSecond() + ")",
+                ChatColor.GRAY + "(Online: " + server.getOnlinePlayers() + "/" + server.getMaxPlayerLimit() + ")",
+                ChatColor.GRAY + "(State: " + server.getServerStatus().name() + ")",
+                ChatColor.GRAY + "(Type: " + server.getServerType().name() + ")",
+        });
+    }
+
+    /**
+     * Get individual data of a {@link NetworkServer}
+     *
+     * @param server the server to get the data from
+     * @return the formatted network data
+     */
+    private String getIndividualNetworkData(NetworkServer server) {
+        return String.join("\n", new String[]{
+                ChatColor.AQUA + "Server Type: " + ChatColor.DARK_AQUA + server.getServerType().getServerTypeString(),
+                ChatColor.AQUA + "server Status: " + ColorUtil.translate(server.getServerStatus().getServerStatusFancyString()),
+                ChatColor.AQUA + "Max Players: " + ChatColor.DARK_AQUA + server.getMaxPlayerLimit(),
+                ChatColor.AQUA + "Online Players: " + ChatColor.DARK_AQUA + server.getOnlinePlayers(),
+                ChatColor.AQUA + "Ticks per Second: " + ChatColor.DARK_AQUA + server.getTicksPerSecond(),
+        });
     }
 }
