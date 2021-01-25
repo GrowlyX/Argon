@@ -7,15 +7,9 @@ import java.beans.ConstructorProperties;
 @Getter
 public enum DataPacket {
 
-    SERVER_DATA_COMMAND("ServerDataCommand"),
-    SERVER_DATA_ONLINE("ServerDataOnline"),
-    SERVER_DATA_UPDATE("ServerDataUpdate"),
-    SERVER_DATA_OFFLINE("ServerDataOffline");
+    SERVER_DATA_COMMAND,
+    SERVER_DATA_ONLINE,
+    SERVER_DATA_UPDATE,
+    SERVER_DATA_OFFLINE
 
-    public String packetDataName;
-
-    @ConstructorProperties("packetDataName")
-    DataPacket(String packetDataName) {
-        this.packetDataName = packetDataName;
-    }
 }

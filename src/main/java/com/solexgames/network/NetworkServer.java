@@ -10,7 +10,6 @@ public class NetworkServer {
 
     private String serverName;
     private String ticksPerSecond;
-    private String ticksPerSecondSimplified;
 
     private NetworkServerType serverType;
     private NetworkServerStatus serverStatus;
@@ -19,33 +18,59 @@ public class NetworkServer {
     private int onlinePlayers;
 
     private boolean whitelistEnabled;
+    private boolean online;
 
+    /**
+     * Constructor for making a new {@link NetworkServer} object
+     *
+     * @param serverName the name of the server
+     * @param serverType the type of the server
+     */
     public NetworkServer(String serverName, NetworkServerType serverType) {
         this.serverName = serverName;
         this.serverType = serverType;
-        DataPlugin.getInstance().getServerManager().addNetworkServer(this);
+
+        DataPlugin.getInstance().getServerManager().getNetworkServers().add(this);
     }
 
-    public static NetworkServer getByName(String name){
-        return DataPlugin.getInstance().getServerManager().getNetworkServers().stream().filter(masters -> masters.getServerName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    /**
+     * Find a {@link NetworkServer} by a name
+     *
+     * @param name the name of the server
+     * @return the server
+     */
+    public static NetworkServer getByName(String name) {
+        return DataPlugin.getInstance().getServerManager().getNetworkServers().stream()
+                .filter(masters -> masters.getServerName().equalsIgnoreCase(name))
+                .findFirst().orElse(null);
     }
 
-    public void update(int onlinePlayers, String ticksPerSecond, int maxPlayerLimit, boolean whitelistEnabled, String ticksPerSecondSimplified, boolean online) {
-        this.onlinePlayers = onlinePlayers;
-        this.ticksPerSecond = ticksPerSecond;
-        this.maxPlayerLimit = maxPlayerLimit;
-        this.whitelistEnabled = whitelistEnabled;
-        this.ticksPerSecondSimplified = ticksPerSecondSimplified;
-        updateServerStatus(online, whitelistEnabled);
+    /**
+     * Set the online state of the server
+     *
+     * @param online the online state of the server
+     */
+    public void setOnline(boolean online) {
+        this.online = online;
+        this.updateServerStatus();
     }
 
-    public void updateServerStatus(boolean online, boolean whitelistEnabled) {
-        if (whitelistEnabled && online) {
-            this.serverStatus = NetworkServerStatus.WHITELISTED;
-        } else if (online) {
-            this.serverStatus = NetworkServerStatus.ONLINE;
-        } else {
-            this.serverStatus = NetworkServerStatus.OFFLINE;
-        }
+    /**
+     * Set the state of the whitelist of the server
+     *
+     * @param enabled the state of the whitelist
+     */
+    public void setWhitelistEnabled(boolean enabled) {
+        this.whitelistEnabled = enabled;
+        this.updateServerStatus();
+    }
+
+    /**
+     * Update the status of the server
+     */
+    public void updateServerStatus() {
+        this.serverStatus = online
+                ? (whitelistEnabled ? NetworkServerStatus.WHITELISTED : NetworkServerStatus.ONLINE)
+                : NetworkServerStatus.OFFLINE;
     }
 }

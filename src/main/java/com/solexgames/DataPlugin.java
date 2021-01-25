@@ -5,6 +5,7 @@ import com.solexgames.network.NetworkServerManager;
 import com.solexgames.redis.RedisClient;
 import com.solexgames.task.ServerUpdateTask;
 import com.solexgames.util.RedisUtil;
+import com.solexgames.util.TPSRunnable;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,36 +17,33 @@ import java.util.concurrent.Executors;
 public final class DataPlugin extends JavaPlugin {
 
     @Getter
-    public static DataPlugin instance;
+    private static DataPlugin instance;
 
-    public RedisClient redisClient;
+    private final TPSRunnable tpsRunnable = new TPSRunnable();
+    private final Executor redisThread = Executors.newFixedThreadPool(1);
 
-    public NetworkServerManager serverManager;
-    public CommandManager commandManager;
+    private NetworkServerManager serverManager;
+    private CommandManager commandManager;
 
-    public Executor redisThread;
+    private RedisClient redisClient;
+
 
     @Override
     public void onEnable() {
-        instance = this;
+        instance = JavaPlugin.getPlugin(DataPlugin.class);
 
-        this.redisThread = Executors.newFixedThreadPool(1);
+        this.saveDefaultConfig();
+        this.getConfig().options().copyDefaults(true);
 
-        if (!this.getName().equals("Argon")) {
-            this.getLogger().severe("[Core] Why did you change the plugin name?");
-            Bukkit.getScheduler().cancelAllTasks();
-            this.getServer().shutdown();
-        }
-
-        saveDefaultConfig();
-
-        this.redisClient = new RedisClient();
+        // setup managers
         this.serverManager = new NetworkServerManager();
         this.commandManager = new CommandManager();
 
-        new ServerUpdateTask();
+        // redis
+        this.redisClient = new RedisClient();
 
-        this.getRedisThread().execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerOnline()));
+        this.startTasks();
+        this.getRedisThread().execute(() -> DataPlugin.getInstance().getRedisClient().write(RedisUtil.getServerOnlineMessage().toString()));
 
         if (DataPlugin.getInstance().getConfig().getBoolean("debug")) {
             DataPlugin.getInstance().getLogger().info("[DEBUG] Sent server online message to all connected servers.");
@@ -55,8 +53,16 @@ public final class DataPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         Bukkit.getScheduler().cancelAllTasks();
-        DataPlugin.getInstance().getRedisClient().write(RedisUtil.onServerOffline());
+        DataPlugin.getInstance().getRedisClient().write(RedisUtil.getServerOfflineMessage().toString());
+
         this.redisClient.destroyClient();
-        instance = null;
+    }
+
+    /**
+     * Start required tasks for Argon
+     */
+    private void startTasks() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TPSRunnable(), 0L, 1L);
+        new ServerUpdateTask();
     }
 }

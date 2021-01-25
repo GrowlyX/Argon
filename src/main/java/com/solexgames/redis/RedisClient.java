@@ -12,51 +12,31 @@ import redis.clients.jedis.JedisPool;
 public class RedisClient {
 
     private JedisPool jedisPool;
-    private RedisListener redisListener;
-
-    private final String redisAddress;
-    private final String redisPassword;
-    private final int redisPort;
-
-    private boolean redisAuthentication;
-    private boolean isClientActive;
 
     public RedisClient() {
-        this.redisAddress = DataPlugin.getInstance().getConfig().getString("redis.address");
-        this.redisPassword = DataPlugin.getInstance().getConfig().getString("redis.password");
-        this.redisPort = DataPlugin.getInstance().getConfig().getInt("redis.port");
-        this.redisAuthentication = DataPlugin.getInstance().getConfig().getBoolean("redis.authentication");
+        this.jedisPool = new JedisPool(DataPlugin.getInstance().getConfig().getString("redis.address"), DataPlugin.getInstance().getConfig().getInt("redis.port"));
+        Jedis jedis = this.jedisPool.getResource();
 
-        try {
-            this.jedisPool = new JedisPool(redisAddress, redisPort);
-            Jedis jedis = this.jedisPool.getResource();
-
-            if (redisAuthentication){
-                jedis.auth(this.redisPassword);
-            }
-            this.redisListener = new RedisListener();
-            (new Thread(() -> jedis.subscribe(this.redisListener, "ARGON-DATA"))).start();
-            jedis.connect();
-            this.setClientActive(true);
-            DataPlugin.getInstance().getLogger().info("[Redis] Connected to Redis backend.");
-        } catch (Exception e) {
-            DataPlugin.getInstance().getLogger().severe("[Redis] Could not connect to Redis backend.");
-            this.setClientActive(false);
+        if (DataPlugin.getInstance().getConfig().getBoolean("redis.authentication")) {
+            jedis.auth(DataPlugin.getInstance().getConfig().getString("redis.password"));
         }
+
+        new Thread(() -> jedis.subscribe(new RedisListener(), "ARGON-DATA")).start();
+
+        DataPlugin.getInstance().getLogger().info("[Redis] Connected to Redis backend.");
     }
 
     public void destroyClient() {
-        try {
-            jedisPool.destroy();
-            this.redisListener.unsubscribe();
-        } catch (Exception e) {
-            System.out.println("[Redis] Could not destroy Redis Pool.");
-        }
+        jedisPool.destroy();
     }
 
-    public void write(String json){
+    public void write(String json) {
         try (Jedis jedis = this.jedisPool.getResource()) {
-            jedis.auth(this.redisPassword);
+
+            if (DataPlugin.getInstance().getConfig().getBoolean("redis.authentication")) {
+                jedis.auth(DataPlugin.getInstance().getConfig().getString("redis.password"));
+            }
+
             jedis.publish("ARGON-DATA", json);
         }
     }
